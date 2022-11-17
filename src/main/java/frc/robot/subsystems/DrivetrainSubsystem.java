@@ -19,12 +19,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.Mk4SwerveModuleHelper;
 import frc.lib.SdsModuleConfigurations;
 import frc.lib.SwerveModule;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import static frc.robot.Constants.*;
 
 import java.util.HashMap;
@@ -143,6 +145,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public Pose2d getPose(){
         return m_odometry.getPoseMeters();
   }
+  
+  public void resetOdometry(Pose2d pose){
+        m_odometry.resetPosition(pose, getGyroscopeRotation());
+  }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_chassisSpeeds = chassisSpeeds;
@@ -166,7 +172,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         new PIDController(0, 0, 0),
                         new PIDController(0, 0, 0),
                         new PIDController(0, 0, 0),
-                        this::setModuleStates,
+                        this::set,
                         eventMap,
                         this
                 )
