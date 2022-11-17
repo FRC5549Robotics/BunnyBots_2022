@@ -154,10 +154,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_chassisSpeeds = chassisSpeeds;
   }
 
+
+
   public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath){
         HashMap<String, Command> eventMap = new HashMap<>();
-        eventMap.put("marker1", new PrintCommand("Passed Marker 1"));
-        eventMap.put("intakeDown", new IntakeDown());
+
 
         return new SequentialCommandGroup(
                 new InstantCommand(() -> {
@@ -172,7 +173,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         new PIDController(0, 0, 0),
                         new PIDController(0, 0, 0),
                         new PIDController(0, 0, 0),
-                        this::set,
+                        (SwerveModuleState[] states) -> {
+                                m_chassisSpeeds = m_kinematics.toChassisSpeeds(states);
+                        },
                         eventMap,
                         this
                 )
