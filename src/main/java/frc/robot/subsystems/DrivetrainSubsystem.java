@@ -44,7 +44,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
           Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
 
-  private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+  public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
           // Front left
           new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
           // Front right
@@ -63,7 +63,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private final SwerveModule m_backLeftModule;
   private final SwerveModule m_backRightModule;
 
-  private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+  public ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
   
   public DrivetrainSubsystem() {
@@ -154,34 +154,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_chassisSpeeds = chassisSpeeds;
   }
 
-
-
-  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath){
-        HashMap<String, Command> eventMap = new HashMap<>();
-
-
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> {
-                        if(isFirstPath){
-                                this.resetOdometry(traj.getInitialHolonomicPose());
-                        }
-                }),
-                new PPSwerveControllerCommand(
-                        traj,
-                        this::getPose,
-                        this.m_kinematics,
-                        new PIDController(0, 0, 0),
-                        new PIDController(0, 0, 0),
-                        new PIDController(0, 0, 0),
-                        (SwerveModuleState[] states) -> {
-                                m_chassisSpeeds = m_kinematics.toChassisSpeeds(states);
-                        },
-                        eventMap,
-                        this
-                )
-        );
-  }
-
   @Override
   public void periodic() {
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
@@ -189,6 +161,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
     //SwerveDriveKinematics.normalizeWheelSpeeds
     //SwerveDriveKinematics.nor
+    m_odometry.update(getGyroscopeRotation(), states);
 
     m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());

@@ -26,11 +26,10 @@ public final class Constants {
      */
     public static final double DRIVETRAIN_WHEELBASE_METERS = 0.5715; 
 
-    //public static final int DRIVETRAIN_PIGEON_ID = 0; // FIXME Set Pigeon ID
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2; 
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1; 
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1; // FIXME Set front left steer encoder ID
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1; 
     public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(128.8); // 128.8 FIXME Measure and set front left steer offset
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 8; 

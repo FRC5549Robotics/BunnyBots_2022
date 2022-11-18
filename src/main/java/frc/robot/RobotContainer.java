@@ -12,16 +12,25 @@ import edu.wpi.first.wpilibj.XboxController;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import edu.wpi.first.math.controller.PIDController;
+import java.util.HashMap;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,7 +43,7 @@ public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
   private final XboxController m_controller = new XboxController(0);
-
+  PathPlannerTrajectory traj = PathPlanner.loadPath("New Path", new PathConstraints(3.75, 2.75));
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -81,12 +90,27 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(""); // asdf
-      Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    }
-    catch (IOException e) { DriverStation.reportError("Unable to open trajectory", e.getStackTrace()); }
-    return new InstantCommand();
+      HashMap<String, Command> eventMap = new HashMap<>();
+      return new SequentialCommandGroup(
+              new InstantCommand(() -> {
+                      if(true){
+                              m_drivetrainSubsystem.resetOdometry(traj.getInitialHolonomicPose());
+                      }
+              }),
+              new PPSwerveControllerCommand(
+                      traj,
+                      m_drivetrainSubsystem::getPose,
+                      m_drivetrainSubsystem.m_kinematics,
+                      new PIDController(0, 0, 0),
+                      new PIDController(0, 0, 0),
+                      new PIDController(0, 0, 0),
+                      (SwerveModuleState[] states) -> {
+                              m_drivetrainSubsystem.m_chassisSpeeds = m_drivetrainSubsystem.m_kinematics.toChassisSpeeds(states);
+                      },
+                      eventMap,
+                      m_drivetrainSubsystem
+              )
+      );
   }
 
   private static double deadband(double value, double deadband) {
