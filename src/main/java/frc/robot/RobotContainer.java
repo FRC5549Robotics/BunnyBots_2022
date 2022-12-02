@@ -25,9 +25,14 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Lift;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+
+import edu.wpi.first.hal.AnalogJNI;
 import edu.wpi.first.math.controller.PIDController;
 import java.util.HashMap;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -41,9 +46,17 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final Intake m_intake = new Intake();
+  private final Lift m_lift = new Lift();
 
   private final XboxController m_controller = new XboxController(0);
+  private final XboxController m_controller_2 = new XboxController(1);
   PathPlannerTrajectory traj = PathPlanner.loadPath("New Path", new PathConstraints(3.75, 2.75));
+
+  JoystickButton intakeButtonforward = new JoystickButton(m_controller_2, 0);
+  JoystickButton intakeButtonbackward = new JoystickButton(m_controller_2, 1);
+  JoystickButton liftButtonUp = new JoystickButton(m_controller_2, 3);
+  JoystickButton liftButtonDown = new JoystickButton(m_controller_2, 4);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -81,6 +94,15 @@ public class RobotContainer {
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+
+    intakeButtonforward.whenPressed(new InstantCommand(m_intake::intake_up));
+    intakeButtonforward.whenReleased(new InstantCommand(m_intake::intake_stop));
+    intakeButtonbackward.whenPressed(new InstantCommand(m_intake::intake_down));
+    intakeButtonbackward.whenReleased(new InstantCommand(m_intake::intake_stop));
+    liftButtonUp.whenPressed(new InstantCommand(m_lift::LiftUp));
+    liftButtonUp.whenReleased(new InstantCommand(m_lift::LiftStop));
+    liftButtonDown.whenPressed(new InstantCommand(m_lift::LiftDown));
+    liftButtonDown.whenReleased(new InstantCommand(m_lift::LiftStop));
   }
 
   /**
