@@ -1,6 +1,6 @@
 package frc.lib;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
