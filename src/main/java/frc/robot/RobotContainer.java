@@ -31,7 +31,7 @@ import java.util.HashMap;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * This class is where the bulk of the robot should be  declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
@@ -46,15 +46,20 @@ public class RobotContainer {
   private final XboxController m_controller_2 = new XboxController(1);
   PathPlannerTrajectory traj = PathPlanner.loadPath("New Path", new PathConstraints(3.75, 2.75));
 
-  JoystickButton intakeButtonforward = new JoystickButton(m_controller_2, 0);
-  JoystickButton intakeButtonbackward = new JoystickButton(m_controller_2, 1);
+  JoystickButton intakeButtonforward = new JoystickButton(m_controller_2, 2);
+  JoystickButton intakeButtonbackward = new JoystickButton(m_controller_2, 4);
   JoystickButton liftButtonUp = new JoystickButton(m_controller_2, 3);
-  JoystickButton liftButtonDown = new JoystickButton(m_controller_2, 4);
+  JoystickButton liftButtonDown = new JoystickButton(m_controller_2, 1);
+  JoystickButton liftBackUp = new JoystickButton(m_controller_2, 5);
+  JoystickButton liftBackDown = new JoystickButton(m_controller_2, 7);
+  JoystickButton liftFrontUp = new JoystickButton(m_controller_2, 6);
+  JoystickButton liftFrontDown = new JoystickButton(m_controller_2, 8);
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Set up the default command for the drivetrain.
+    // Set up the default command for the drivetrain./
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
@@ -96,6 +101,18 @@ public class RobotContainer {
     liftButtonUp.whenReleased(new InstantCommand(m_lift::LiftStop));
     liftButtonDown.whenPressed(new InstantCommand(m_lift::LiftDown));
     liftButtonDown.whenReleased(new InstantCommand(m_lift::LiftStop));
+    liftBackDown.whenPressed(new InstantCommand(m_lift::LiftBackDown));
+    liftBackUp.whenPressed(new InstantCommand(m_lift::LiftBackUp));
+    liftFrontUp.whenPressed(new InstantCommand(m_lift::LiftFrontUp));
+    liftFrontDown.whenPressed(new InstantCommand(m_lift::LiftFrontDown));
+
+    liftBackDown.whenReleased(new InstantCommand(m_lift::LiftStop));
+    liftBackUp.whenReleased(new InstantCommand(m_lift::LiftStop));
+    liftFrontUp.whenReleased(new InstantCommand(m_lift::LiftStop));
+    liftFrontDown.whenReleased(new InstantCommand(m_lift::LiftStop));
+
+
+
   }
 
   /**

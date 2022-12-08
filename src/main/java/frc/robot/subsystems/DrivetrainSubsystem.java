@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.Mk4SwerveModuleHelper;
 import frc.lib.SdsModuleConfigurations;
@@ -148,12 +149,17 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     //SwerveDriveKinematics.normalizeWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
     //SwerveDriveKinematics.normalizeWheelSpeeds
     //SwerveDriveKinematics.nor
     m_odometry.update(getGyroscopeRotation(), states);
+    SmartDashboard.putNumber("Back Left", BACK_LEFT_MODULE_DRIVE_MOTOR);
+    SmartDashboard.putNumber("Back Rigt", BACK_RIGHT_MODULE_DRIVE_MOTOR);
+    SmartDashboard.putNumber("Front Left", FRONT_LEFT_MODULE_DRIVE_MOTOR);
+    SmartDashboard.putNumber("Front Right", FRONT_RIGHT_MODULE_DRIVE_MOTOR);
 
     m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
