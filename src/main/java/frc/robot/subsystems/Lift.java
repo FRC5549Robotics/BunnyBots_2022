@@ -24,12 +24,12 @@ public class Lift extends SubsystemBase {
   }
 
   public void LiftUp(){
-    lift_motor_1.set(ControlMode.PercentOutput, 0.5);
-    lift_motor_2.set(ControlMode.PercentOutput, 0.1);
+    lift_motor_1.set(ControlMode.PercentOutput, -0.5);
+    lift_motor_2.set(ControlMode.PercentOutput, 0.5);
   }
 
   public void LiftDown(){
-    lift_motor_1.set(ControlMode.PercentOutput, -0.5);
+    lift_motor_1.set(ControlMode.PercentOutput, 0.5);
     lift_motor_2.set(ControlMode.PercentOutput, -0.5);
   }
 

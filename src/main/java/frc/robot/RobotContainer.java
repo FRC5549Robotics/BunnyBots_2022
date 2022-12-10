@@ -52,9 +52,12 @@ public class RobotContainer {
   JoystickButton liftButtonDown = new JoystickButton(m_controller_2, 1);
   JoystickButton liftBackUp = new JoystickButton(m_controller_2, 5);
   JoystickButton liftBackDown = new JoystickButton(m_controller_2, 7);
-  JoystickButton liftFrontUp = new JoystickButton(m_controller_2, 6);
-  JoystickButton liftFrontDown = new JoystickButton(m_controller_2, 8);
-  
+  JoystickButton liftFrontUp = new JoystickButton(m_controller_2, 8);
+  JoystickButton liftFrontDown = new JoystickButton(m_controller_2, 6);
+  //JoystickButton gyro = new JoystickButton(m_controller, 6);
+  JoystickButton intakeSlowUp = new JoystickButton(m_controller_2, 9);
+  JoystickButton intakeSlowDown = new JoystickButton(m_controller_2, 10);
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -66,9 +69,9 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
             m_drivetrainSubsystem,
-            () -> -modifyAxis(m_controller.getLeftY()*0.8) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()*0.8) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()*0.8) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+            () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
     // m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
     //         m_drivetrainSubsystem,
@@ -92,11 +95,12 @@ public class RobotContainer {
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
-
+       
     intakeButtonforward.whenPressed(new InstantCommand(m_intake::intake_up));
     intakeButtonforward.whenReleased(new InstantCommand(m_intake::intake_stop));
     intakeButtonbackward.whenPressed(new InstantCommand(m_intake::intake_down));
     intakeButtonbackward.whenReleased(new InstantCommand(m_intake::intake_stop));
+
     liftButtonUp.whenPressed(new InstantCommand(m_lift::LiftUp));
     liftButtonUp.whenReleased(new InstantCommand(m_lift::LiftStop));
     liftButtonDown.whenPressed(new InstantCommand(m_lift::LiftDown));
@@ -111,6 +115,12 @@ public class RobotContainer {
     liftFrontUp.whenReleased(new InstantCommand(m_lift::LiftStop));
     liftFrontDown.whenReleased(new InstantCommand(m_lift::LiftStop));
 
+    intakeSlowDown.whenPressed(new InstantCommand(m_intake::set_slow_intake_motor_down));
+    intakeSlowDown.whenReleased(new InstantCommand(m_intake::intake_stop));
+
+    intakeSlowUp.whenPressed(new InstantCommand(m_intake::set_slow_intake_motor_up));
+    intakeSlowUp.whenReleased(new InstantCommand(m_intake::intake_stop));
+    
 
 
   }

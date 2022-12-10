@@ -24,6 +24,8 @@ import frc.lib.SwerveModule;
 import edu.wpi.first.math.geometry.Pose2d;
 import static frc.robot.Constants.*;
 
+  
+
 
 public class DrivetrainSubsystem extends SubsystemBase {
   
@@ -122,7 +124,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * 'forwards' direction.
    */
   public void zeroGyroscope() {
+
     m_navx.zeroYaw();
+    //m_navx.calibrate();
+    
   }
 
   public Rotation2d getGyroscopeRotation() {
